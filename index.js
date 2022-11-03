@@ -1,6 +1,6 @@
-const SHOW_FIGURES_DELAY = 150;
-const ACTIVATE_FIGURES_DELAY = 1100;
-const HIDE_FIGURES_DELAY = 900;
+const SHOW_FIGURES_DELAY = 200;
+const ACTIVATE_FIGURES_DELAY = 500;
+const HIDE_FIGURES_DELAY = 2500;
 
 const SQUARE_FIGURE = document.getElementById("square");
 const CIRCLE_FIGURE = document.getElementById("circle");
