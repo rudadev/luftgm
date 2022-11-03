@@ -1,6 +1,7 @@
 const SHOW_FIGURES_DELAY = 200;
 const ACTIVATE_FIGURES_DELAY = 500;
 const HIDE_FIGURES_DELAY = 2500;
+const AUTO_STOP_DELAY = 5 * 1000 * 60;
 
 const SQUARE_FIGURE = document.getElementById("square");
 const CIRCLE_FIGURE = document.getElementById("circle");
@@ -25,6 +26,7 @@ class Game {
 
   start() {
     this.isRunning = true;
+    this.setupStopTimeout();
     this.updateButtonsUI();
     this.elements.hide();
 
@@ -120,6 +122,10 @@ class Game {
   calcPoints() {
     const offPoints = this.reactions.failures * 50;
     return this.reactions.calcAvarageReactionTime() + offPoints;
+  }
+
+  setupStopTimeout() {
+    setTimeout(() => this.stop(), AUTO_STOP_DELAY);
   }
 }
 
