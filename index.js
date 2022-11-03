@@ -173,6 +173,7 @@ class ButtonsController {
   static startButton = document.getElementById("start-btn");
   static stopButton = document.getElementById("stop-btn");
   static enterButton = document.getElementById("green-btn");
+  static enterKeys = ["Enter", " "];
 
   static toggleDisabledStartStopButtons() {
     const isStartButtonDisabled = this.startButton.disabled;
@@ -194,6 +195,9 @@ class ButtonsController {
 
   static onEnterClick(callback) {
     this.enterButton.onclick = callback;
+    document.addEventListener("keydown", (event) => {
+      if (this.enterKeys.includes(event.key)) callback();
+    });
   }
 }
 
