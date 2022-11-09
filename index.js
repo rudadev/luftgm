@@ -6,9 +6,6 @@ const AUTO_STOP_DELAY = 5 * 1000 * 60;
 const SQUARE_FIGURE = document.getElementById("square");
 const CIRCLE_FIGURE = document.getElementById("circle");
 
-let lastGameData = {};
-let game;
-
 class Game {
   isRunning = false;
   reactions = new Reactions();
@@ -26,7 +23,7 @@ class Game {
 
   start() {
     this.isRunning = true;
-    this.setupStopTimeout();
+    this.autoStopAfterTimeout();
     this.updateButtonsUI();
     this.elements.hide();
 
@@ -100,6 +97,7 @@ class Game {
     this.updateButtonsUI();
     this.elements.deactivate(false);
     this.elements.show();
+    gameData.show();
   }
 
   updateButtonsUI() {
@@ -109,14 +107,14 @@ class Game {
 
   saveGameData() {
     const points = this.calcPoints();
-    lastGameData = {
+    gameData.update({
       failures: this.reactions.failures,
       successes: this.reactions.successes,
       iterations: this.iteration.id,
       reactionTimes: this.reactions.times,
       points,
       winner: points <= 450,
-    };
+    });
   }
 
   calcPoints() {
@@ -124,7 +122,7 @@ class Game {
     return this.reactions.calcAvarageReactionTime() + offPoints;
   }
 
-  setupStopTimeout() {
+  autoStopAfterTimeout() {
     setTimeout(() => this.stop(), AUTO_STOP_DELAY);
   }
 }
@@ -350,6 +348,21 @@ class IterationState {
   static ACTIVE = 2;
 }
 
+class GameData {
+  static dataElement = document.documentElement;
+  data = {};
+
+  update(newData) {
+    this.data = newData;
+  }
+
+  show() {
+    GameData.dataElement.innerHTML = JSON.stringify(this.data);
+  }
+}
+let gameData = new GameData();
+let game;
+
 const init = () => {
   ButtonsController.onStartClick(() => {
     game = new Game();
@@ -359,8 +372,6 @@ const init = () => {
   ButtonsController.onStopClick(() => {
     game.stop();
     game = null;
-    document.documentElement.innerHTML = JSON.stringify(lastGameData);
-    z;
   });
 
   ButtonsController.onEnterClick(() => {
