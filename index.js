@@ -370,8 +370,8 @@ const init = () => {
   });
 
   ButtonsController.onStopClick(() => {
-    game.stop();
-    game = null;
+    // game.stop();
+    // game = null;
   });
 
   ButtonsController.onEnterClick(() => {
