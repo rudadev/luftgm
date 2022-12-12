@@ -67,5 +67,10 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   margin-top: 40px;
+}
+
+#info-container :last-child {
+  margin-top: 10px;
 }

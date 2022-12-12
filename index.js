@@ -6,6 +6,8 @@ const AUTO_STOP_DELAY = 5 * 1000 * 60;
 const SQUARE_FIGURE = document.getElementById("square");
 const CIRCLE_FIGURE = document.getElementById("circle");
 
+let gameType = "UNI";
+
 class Game {
   isRunning = false;
   reactions = new Reactions();
@@ -175,14 +177,15 @@ class ReactionTimeStopwatch {
 
 class ButtonsController {
   static startButton = document.getElementById("start-btn");
-  static stopButton = document.getElementById("stop-btn");
+  static gameTypeCheck = document.getElementById("game-type");
+  static gameTypeLabel = document.getElementById("game-type-label");
   static enterButton = document.getElementById("green-btn");
   static enterKeys = ["Enter", " "];
 
   static toggleDisabledStartStopButtons() {
-    const isStartButtonDisabled = this.startButton.disabled;
-    this.startButton.disabled = !isStartButtonDisabled;
-    this.stopButton.disabled = isStartButtonDisabled;
+    const disabled = this.startButton.disabled;
+    this.startButton.disabled = !disabled;
+    this.gameTypeCheck.disabled = !disabled;
   }
 
   static toggleDisabledEnterButton() {
@@ -193,8 +196,12 @@ class ButtonsController {
     this.startButton.onclick = callback;
   }
 
-  static onStopClick(callback) {
-    this.stopButton.onclick = callback;
+  static onGameTypeChanges(callback) {
+    this.gameTypeCheck.onchange = callback;
+  }
+
+  static updateGameTypeLabel(label) {
+    this.gameTypeLabel.innerText = label;
   }
 
   static onEnterClick(callback) {
@@ -369,9 +376,11 @@ const init = () => {
     game.start();
   });
 
-  ButtonsController.onStopClick(() => {
-    // game.stop();
-    // game = null;
+  ButtonsController.onGameTypeChanges((event) => {
+    const { checked } = event.target;
+    if (checked) gameType = "CROSS";
+    else gameType = "UNI";
+    ButtonsController.updateGameTypeLabel(gameType);
   });
 
   ButtonsController.onEnterClick(() => {
