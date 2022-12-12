@@ -97,8 +97,8 @@ class Game {
     this.saveGameData();
     this.iteration.breakCycle();
     this.updateButtonsUI();
-    this.elements.deactivate(false);
     this.elements.show();
+    this.elements.deactivate(false);
     gameData.show();
   }
 
@@ -218,7 +218,10 @@ class ElementsController {
 
   constructor(elements) {
     this.first = new SingleElementController(elements.firstElement);
-    this.second = new SingleElementController(elements.secondElement);
+    this.second =
+      gameType === "UNI"
+        ? new SingleElementController(elements.secondElement)
+        : new SingleSoundController();
   }
 
   hide() {
@@ -285,6 +288,52 @@ class SingleElementController {
 
   areBothActive() {
     return this.lastState === this.currentState && this.isCurrentActive();
+  }
+}
+
+class SingleSoundController extends SingleElementController {
+  static staticSoundFq = 1000;
+  static activeSoundFq = 2700;
+  staticOscillator;
+  activeOscillator;
+
+  constructor() {
+    super();
+  }
+
+  hide() {
+    if (this.staticOscillator) this.staticOscillator.stop();
+    if (this.activeOscillator) this.activeOscillator.stop();
+  }
+
+  show() {
+    const context = new AudioContext();
+    const gainNode = context.createGain();
+    const oscillator = context.createOscillator();
+    oscillator.frequency.value = SingleSoundController.staticSoundFq;
+    oscillator.connect(gainNode);
+    gainNode.connect(context.destination);
+    oscillator.start(0);
+    this.staticOscillator = oscillator;
+  }
+
+  activate() {
+    if (!this.isCurrentActive()) return;
+    this.staticOscillator.stop();
+    const context = new AudioContext();
+    const gainNode = context.createGain();
+    const oscillator = context.createOscillator();
+    oscillator.frequency.value = SingleSoundController.activeSoundFq;
+    oscillator.connect(gainNode);
+    gainNode.connect(context.destination);
+    oscillator.start(0);
+    this.activeOscillator = oscillator;
+  }
+
+  deactivate(preserveLastState) {
+    this.hide();
+    this.lastState = preserveLastState ? this.currentState : null;
+    this.currentState = null;
   }
 }
 
@@ -378,8 +427,8 @@ const init = () => {
 
   ButtonsController.onGameTypeChanges((event) => {
     const { checked } = event.target;
-    if (checked) gameType = "CROSS";
-    else gameType = "UNI";
+    gameType = checked ? "CROSS" : "UNI";
+    CIRCLE_FIGURE.style.display = checked ? "none" : "block";
     ButtonsController.updateGameTypeLabel(gameType);
   });
 
